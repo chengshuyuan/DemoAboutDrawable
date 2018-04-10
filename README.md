@@ -81,25 +81,117 @@
             
         <Shape/>
         
-        - 1 android:shape 图像的形状
-            - 1 有四个选项["rectangle" | "oval" | "line" | "ring"],默认值是rectangle
-            - 2 line和ring两个选项必须要通过<stroke>标签来指定线的宽度、颜色等信息，否则无法达到预期的效果
-        - 2 <corners> 四个角度
-            - 1 只适用于巨型shape
-            - 2 五个属性中，android:radius的优先级最低，会被其他四个覆盖
-        - 3 <gradient> 渐变效果
-            - 1 与<solid>标签是互斥的，solid表示纯色填充，而gradient则表示渐变效果
-            - 2 android:type=["linear" | "radial" | "sweep"], linear(线性渐变) radial(径向渐变)sweep(扫描渐变)
-- 2 需要注意的是<shape>标签创建的Drawable,其实体类是GradientDrawable        
-        - 4 <solid> 纯色填充
-        - 5 <stroke> Shape的描边
-            - 1 android:dashWidth:组成虚线的线段宽度
-            - 2 android:dashGap: 组成虚线的线段之间的间隔，间隔越大虚线看起来空隙越大
-            - 3 dashWidth和dashGap如果有一个为0，虚线的效果不生效
-        - 6 <padding>表示空白
-            - 1 它表示的不是shape的空白，而是包办它的View的空白
-        - 7 <size> shape的大小
-            - 1 它表示的Shape的固有大小，但是它并不是shape最终显示的大小
-            - 2 shape是没有宽高的概念的，作为View的背景它会自适应View的宽高
-            - 3 通过<shape>标签设置了shape的大小，getIntrinsicWith() getIntrinsicHeight()函数就可以得到，否则这两个函数返回-1
+     - 1 android:shape 图像的形状
+         - 1 有四个选项["rectangle" | "oval" | "line" | "ring"],默认值是rectangle
+         - 2 line和ring两个选项必须要通过<stroke>标签来指定线的宽度、颜色等信息，否则无法达到预期的效果
+     - 2 <corners> 四个角度
+         - 1 只适用于巨型shape
+         - 2 五个属性中，android:radius的优先级最低，会被其他四个覆盖
+     - 3 <gradient> 渐变效果
+         - 1 与<solid>标签是互斥的，solid表示纯色填充，而gradient则表示渐变效果
+         - 2 android:type=["linear" | "radial" | "sweep"], linear(线性渐变) radial(径向渐变)sweep(扫描渐变)
+     - 4 <solid> 纯色填充
+     - 5 <stroke> Shape的描边
+         - 1 android:dashWidth:组成虚线的线段宽度
+         - 2 android:dashGap: 组成虚线的线段之间的间隔，间隔越大虚线看起来空隙越大
+         - 3 dashWidth和dashGap如果有一个为0，虚线的效果不生效
+     - 6 <padding>表示空白
+         - 1 它表示的不是shape的空白，而是包办它的View的空白
+     - 7 <size> shape的大小
+         - 1 它表示的Shape的固有大小，但是它并不是shape最终显示的大小
+         - 2 shape是没有宽高的概念的，作为View的背景它会自适应View的宽高
+         - 3 通过<shape>标签设置了shape的大小，getIntrinsicWith() getIntrinsicHeight()函数就可以得到，否则这两个函数返回-1
+ - 2 需要注意的是<shape>标签创建的Drawable,其实体类是GradientDrawable 
+### 2.3 LayerDrawable
+- 1 LayerDrawable对应的标签时<layer-list>,它表示一种层次化的Drawable集合，通过将不同的Drawable放置在不同的层上边从而达到一种叠加后的效果。
+        
+        <?xml version="1.0" encoding="utf-8"?>
+        <layer-list
+            xmlns:android="http://schemas.android.com/apk/res/android">
+            <item
+                android:drawable="res"
+                android:id=""
+                android:top="dimension"
+                android:right="dimension"
+                android:bottom="dimension"
+                android:left="dimension"
+            />
+        </layer-list>
+    - 1 每个layer-list中可以包哈多个item，每个item都表示一个drawable
+    - 2 默认情况下，么个drawable会被压缩到View的大小
+### 2.4 StateListDrawable
+- 1 StateListDrawable对应于<selector>标签，它也表示Drawable集合，每个drawable对应着View的一种状态
+      
+        <?xml version="1.0" encoding="utf-8"?>
+        <selector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:constantSize="Boolean"
+            android:dither="boolean"
+            android:variablePadding="boolean">
+            <item
+                android:drawable="res"
+                android:state_pressed="boolean"
+                android:state_focused="boolean"
+                android:state_hovered="boolean"
+                android:state_selected="boolean"
+                android:state_checkable="boolean"
+                android:state_enabled="boolean"
+                android:state_activated="boolean"
+                android:state_window_focused="boolean"
+            />
+        </selector> 
+           
+     - 1 android:constantSize 
+        - StateListDrawable的固有大小是否跟随其状态的改变而改变   
+        - 因为状态的改变会导致StateListDrawable切换到具体的Drawable，而不同的Drawable具有不同的固定大小
+        - true表示StateListDrawable的固定大小保持不变，这时它的固有大小时内部所有Drawable的固有大小的最大值
+        - false则会随着状态的改变而改变，默认为false
+     - 2 android:dither
+        - 是否开启抖动效果，开启此选项可以让图片在低质量的屏幕上依然能获得较好的显示效果，默认为true
+     - 3 android:variablePadding
+        - StateListDrawable的padding表示是否随着其状态的改变而改变
+        - false表示StateListDrawable的padding是内部所有Drawable的padding的最大值，默认为诶false
+- 2 系统会根据View当前状态从selector中选择对应的item，每个item对应一个具体的drawable，系统会按照从上到下的顺序查找，直到查找到第一条匹配的item
+- 3 一般来说，selector的最后一条并不附带任何的状态，当所有的状态都没有匹配到时，系统会选择默认的item
+        
+### 2.4  LevelListDrawable
+- 1 LevelListDrawable对应于<level-list>标签，它同样表示一个Drawable的集合，集合中的每个Drawable表示一个等级概念，根据不同的level，LevelListDrawable会切换到对应的Drawable
+        
+        <?xml version="1.0" encoding="utf-8"?>
+        <level-list
+           xmls:android="http://schemas.android.com/apk/res/android">
+           <item
+               android:drawable="res"
+               android:maxLevel="Integer"
+               android:minLevel="Integer"
+           />
+        </level-list>
+        
+     - 1 每个item表示一个drawable，并且有对应的等级范围(由android:maxLevel和android:minLevel确定，最小值和最大值之间的等级会对应这个item)
+     - 2 Drawable的等级是有范围的，即0-10000 
+       
+### 2.5 TransitionDrawable
+- 1 TransitionDrawable对应于<transition>标签，它用于实现两个Drawable之间的淡入和淡出效果
+       
+        <?xml version="1.0" encoding="utf-8"?>
+        <transition
+            xmls:android="http://schemas.android.com/apk/res/android">
+            <item
+                android:drawable="res"
+                android:id="@+id/id"
+                android:top="dimension"
+                android:left="dimension"
+                android:right="dimension"
+                android:bottom="dimension"
+            />
+        </transition>           
+        
+        <TextView 
+            android:id="@+id/textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroud="@drawable/transition_drawable"/>
+        
+        //最后通过startTransition和reverseTransition方法来实现淡入和淡出的效果以及逆过程
+        TransitionDrawable drawable = (TransitionDrawable) textview.getBackground();
+        drawable.startTransition(1000);   
 ## 3 自定义Drawable
