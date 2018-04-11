@@ -194,4 +194,23 @@
         //最后通过startTransition和reverseTransition方法来实现淡入和淡出的效果以及逆过程
         TransitionDrawable drawable = (TransitionDrawable) textview.getBackground();
         drawable.startTransition(1000);   
-## 3 自定义Drawable
+        
+###  2.6 InsertDrawable
+- 1 InsertDrawable对应于标签<insert>,它可以将其他Drawable内嵌到自己当中，并且可以在四周留下一定的兼具。
+- 2 当一个View希望自己的背景比自己的实际区域小的时候，可以采用InsertDrawable来实现    
+   
+        <?xml version="1.0" encoding="utf-8"?>
+            <insert
+                xmls:android="http://schemas.android.com/apk/res/android">
+                <item
+                    android:drawable="res"
+                    android:id="@+id/id"
+                    android:insertTop="dimension"
+                    android:insertLeft="dimension"
+                    android:insertRight="dimension"
+                    android:insertBottom="dimension"
+                />
+            </insert>  
+            
+### 2.7 ScaleDrawable
+- 1 ScaleDrawable对应于<scale>标签，它可以根据自己的等级将指定的Drawable缩放到一定的比例            
